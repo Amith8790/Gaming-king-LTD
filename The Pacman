@@ -1,0 +1,187 @@
+//creating the pacman and ghost
+var pacman = createSprite(20, 20);
+pacman.setAnimation("pacman");
+pacman.scale = 0.15;
+var ghost = createSprite(380, 20);
+ghost.setAnimation("ghost");
+ghost.scale = 0.04;
+background("black");
+//Creating Obstacles
+var obstacle1 = createSprite(195,76);
+obstacle1.setAnimation("obstacle");
+var obstacle2 = createSprite(195,250);
+obstacle2.setAnimation("obstacle_2");
+var obstacle3 = createSprite(100,250);
+obstacle3.setAnimation("obstacle_3");
+var obstacle4 = createSprite(300,250);
+obstacle4.setAnimation("obstacle_3");
+//Creating Point Pills
+var pills = createGroup();
+var dots;
+var TotDots = 0;
+var score = 0;
+var EatDots = 0;
+function createdots(numdots,x_coor,y_coor) {
+  for (var i=0; i< numdots; i++)
+{
+  dots = createSprite(x_coor+20*i,y_coor,5,5);
+  dots.shapeColor="orange";
+  pills.add(dots);
+ TotDots++;
+}
+}
+//Create first train of dots
+createdots(16,50,30);
+//Create second train of dots
+createdots(16,50,120);
+//Create 3rd train of dots
+createdots(6,50,180);
+//Create 4th train of dots
+createdots(6,245,180);
+//Create 5th train of dots
+createdots(6,50,330);
+//Create 6th train of dots
+createdots(6,245,330);
+createEdgeSprites();
+function draw()
+{ 
+  background("black");
+  //Navigating Sprite & Ghost
+  //Left arrow key to move pacman left
+  if (keyDown("left"))
+  {
+    pacman.setSpeedAndDirection(5,180);
+    pacman.rotation = 180;
+    if (pacman.x <ghost.x)
+    {
+      ghost.setSpeedAndDirection(5, 180);
+    }
+    if (pacman.x >ghost.x)
+    {
+      ghost.setSpeedAndDirection(5, 360);
+    }
+  }
+  // Right arrow key to move pacman right
+  if (keyDown("right"))
+  {
+    pacman.setSpeedAndDirection(5,360);
+    pacman.rotation = 360;
+    // If pacman is behind ghost, ghost goes towards it
+    if (pacman.x <ghost.x)
+    {
+      ghost.setSpeedAndDirection(5, 180);
+    }
+    // If pacman is ahead ghost, ghost goes towards it 
+    if (pacman.x >ghost.x)
+    {
+      ghost.setSpeedAndDirection(5, 360);
+    }
+  }
+  // up arrow key to move pacman up
+  if (keyDown("up"))
+  {
+    pacman.setSpeedAndDirection(5,270);
+    pacman.rotation = 270;
+    if (pacman.y <ghost.y)
+    {
+      ghost.setSpeedAndDirection(5, 270);
+    }
+    if (pacman.y >ghost.y)
+    {
+      ghost.setSpeedAndDirection(5, 90);
+    }
+  }
+  // down arrow key to move pacman down
+  if (keyDown("down"))
+  {
+    pacman.setSpeedAndDirection(5,90);
+    pacman.rotation = 90;
+    if (pacman.y <ghost.y)
+    {
+      ghost.setSpeedAndDirection(5, 270);
+    }
+    if (pacman.y >ghost.y)
+    {
+      ghost.setSpeedAndDirection(5, 90);
+    }
+  }
+  
+for (var i = 0;i<TotDots;i++){
+  if (pills.get(i) != undefined && pills.get(i).isTouching(pacman))
+  {
+    pills.get(i).destroy();
+    playSound("Apple-Bite.mp3", false);
+    score = score + 50;
+    EatDots++;
+  }
+ }
+  fill("orange");
+  text(score,20,20);
+ 
+if ( EatDots== TotDots){
+  var success = createSprite(200,200);
+  success.setAnimation("youwin");
+  success.scale = 0.5;
+  pacman.destroy();
+}
+  if (((pacman.collide(obstacle1) || pacman.collide(obstacle2)) || pacman.collide(obstacle3)) || pacman.collide(obstacle4))
+  {
+    pacman.velocityX = 0;
+    pacman.velocityY = 0;
+  }
+  if (ghost.isTouching(pacman)) 
+  {
+    pacman.destroy();
+    ghost.destroy();
+    var gameover = createSprite(200, 200);
+    gameover.setAnimation("gameover.png_1");
+  }
+  if (ghost.isTouching(edges))
+  {
+    ghost.bounceOff(edges);
+  }
+  if (ghost.isTouching(obstacle1))
+  {
+    ghost.bounceOff(obstacle1);
+  }
+  if (ghost.isTouching(obstacle2))
+  {
+   ghost.bounceOff(obstacle2);
+  }
+  if (ghost.isTouching(obstacle3))
+  {
+    ghost.bounceOff(obstacle3);
+  }
+  if (ghost.isTouching(obstacle4))
+  {
+    ghost.bounceOff(obstacle4);
+  }
+  
+  
+  
+    if (pacman.isTouching(edges))
+  {
+    pacman.bounceOff(edges);
+  }
+  if (pacman.isTouching(obstacle1))
+  {
+    pacman.bounceOff(obstacle1);
+  }
+  if (pacman.isTouching(obstacle2))
+  {
+   pacman.bounceOff(obstacle2);
+  }
+  if (pacman.isTouching(obstacle3))
+  {
+    pacman.bounceOff(obstacle3);
+  }
+  if (pacman.isTouching(obstacle4))
+  {
+    pacman.bounceOff(obstacle4);
+  }
+   if (pacman.isTouching(topEdge))
+  {
+   pacman.bounceOff(topEdge);
+  }
+  drawSprites();
+}
